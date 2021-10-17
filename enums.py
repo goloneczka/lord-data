@@ -1,0 +1,12 @@
+NAME_DICTIONARY = {'GAN DALF': 'GANDALF',
+                   'GANDALF VOICEOVER': 'GANDALF',
+                   'GALADRIEL VOICE OVER': 'GALADRIEL',
+                   'GALADRIEL VOICEOVER': 'GALADRIEL',
+                   'GALADRIEL VOICE-OVER': 'GALADRIEL',
+                   'BILBO VOICEOVER': 'BILBO',
+                   'SAM VOICEOVER': 'SAM',
+                   'SARUMAN VOICE OVER ': 'SARUMAN',
+                   'ELROND VOICEOVER': 'ELROND',
+                   'FRODO VOICE OVER': 'FRODO',
+                   'FRODO VOICE': 'FRODO',
+                   'FRODO ': 'FRODO'}

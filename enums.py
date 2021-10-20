@@ -9,4 +9,6 @@ NAME_DICTIONARY = {'GAN DALF': 'GANDALF',
                    'ELROND VOICEOVER': 'ELROND',
                    'FRODO VOICE OVER': 'FRODO',
                    'FRODO VOICE': 'FRODO',
-                   'FRODO ': 'FRODO'}
+                   'FRODO ': 'FRODO',
+                   'MERRY and PIPPIN': 'MERRY AND PIPPIN',
+                   '\xa0GANDALF': 'GANDALF'}

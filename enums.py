@@ -11,4 +11,6 @@ NAME_DICTIONARY = {'GAN DALF': 'GANDALF',
                    'FRODO VOICE': 'FRODO',
                    'FRODO ': 'FRODO',
                    'MERRY and PIPPIN': 'MERRY AND PIPPIN',
-                   '\xa0GANDALF': 'GANDALF'}
+                   '\xa0GANDALF': 'GANDALF',
+                   'male': 'Male',
+                   'Males': 'Male'}

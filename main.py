@@ -46,6 +46,12 @@ def count_races_by_heroes():
 def count_heroes_by_dialogs():
     return count_by_params('lotr_scripts.csv', ['dialog', 'char'])
 
+def count_dialogs_by_movie():
+    return count_by_params('lotr_scripts.csv', ['dialog', 'movie'])
+
+def count_heroes_by_gender():
+    return count_by_params('lotr_characters.csv', ['name', 'gender'])
+
 
 def average_dialogs_length_by_hero():
     columns = ['dialog', 'char']
@@ -145,10 +151,25 @@ def draw_histogram_by_dictionary_with_dictionary(dictionary, title, ylabel, xlab
     plt.savefig(plt_name + '.png')
 
 
+def draw_pie_chart(dictionary):
+    get_n_pairs = {k: dictionary[k] for k in list(dictionary)}
+    labels = list(get_n_pairs.keys())
+    sizes = list(get_n_pairs.values())
+
+    fig1, ax1 = plt.subplots()
+    ax1.pie(sizes, labels=labels, autopct='%1.1f%%',
+            shadow=True, startangle=90)
+
+    plt.show()
+
+
 if __name__ == "__main__":
     get_kaggle_data()
     print(count_races_by_heroes())
+    print(count_dialogs_by_movie())
     draw_histogram_by_dictionary(count_races_by_heroes(), 'amount of heroes in races', 'value', 'race')
+    draw_histogram_by_dictionary(count_dialogs_by_movie(), 'amount of dialogs per movie', 'value', 'movie')
+    draw_pie_chart(count_heroes_by_gender())
     print(count_heroes_by_dialogs())
     draw_histogram_by_dictionary(count_heroes_by_dialogs(), 'amount of dialogs by hero', 'value', 'hero')
     print(average_dialogs_length_by_hero())

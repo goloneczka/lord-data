@@ -76,6 +76,34 @@ def average_dialogs_length_by_hero():
     return {k: v for k, v in sorted(dictionary.items(), key=lambda item: item[1], reverse=True)}
 
 
+def count_dialogs_by_race():
+
+    dictionary_dialogs = count_heroes_by_dialogs()
+    dictionary_dialogs_lower = {}
+    for key, value in dictionary_dialogs.items():
+        dictionary_dialogs_lower[key.lower()] = value
+
+    dictionary_chars = {}
+    csv_reader = pd.read_csv("./" + LOTR_DATASETS + '/' + 'lotr_characters.csv', usecols=['name', 'race'])
+    for _, value in csv_reader.iterrows():
+        race = 'UNKNOWN' if not isinstance(value.race, str) else value.race
+        if race not in dictionary_chars:
+            dictionary_chars[race] = [value[0].lower()]
+        else:
+            dictionary_chars[race].append(value[0].lower())
+
+    dictionary_race = {}
+    for key, nested_dictionary in dictionary_chars.items():
+        dictionary_race[key] = 0
+        for hero in nested_dictionary:
+            alias = enums.NAME_DICTIONARY[hero] if hero in enums.NAME_DICTIONARY else hero
+            if alias in dictionary_dialogs_lower:
+                dictionary_race[key] += dictionary_dialogs_lower[alias]
+
+
+    return {k: v for k, v in sorted(dictionary_race.items(), key=lambda item: item[1], reverse=True)}
+
+
 def count_gender_dialogs_by_move():
     dictionary_dialogs = {}
     csv_reader = pd.read_csv("./" + LOTR_DATASETS + '/' + 'lotr_scripts.csv', usecols=['char', 'movie'])
@@ -165,6 +193,8 @@ def draw_pie_chart(dictionary):
 
 if __name__ == "__main__":
     get_kaggle_data()
+    print(count_dialogs_by_race())
+    draw_histogram_by_dictionary(count_dialogs_by_race(), 'amount of dialogs by race', 'value', 'race')
     print(count_races_by_heroes())
     print(count_dialogs_by_movie())
     draw_histogram_by_dictionary(count_races_by_heroes(), 'amount of heroes in races', 'value', 'race')

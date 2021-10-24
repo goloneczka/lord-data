@@ -144,6 +144,46 @@ def count_gender_dialogs_by_move():
 
     return dictionary_gender
 
+def count_race_dialogs_by_movie(selected_movie):
+    dictionary_dialogs = {}
+    csv_reader = pd.read_csv("./" + LOTR_DATASETS + '/' + 'lotr_scripts.csv', usecols=['char', 'movie'])
+    for _, value in csv_reader.iterrows():
+        if value.movie not in dictionary_dialogs:
+            dictionary_dialogs[value.movie] = {}
+            dictionary_dialogs[value.movie][value.char] = 1
+        elif value.char not in dictionary_dialogs[value.movie]:
+            dictionary_dialogs[value.movie][value.char] = 1
+        else:
+            dictionary_dialogs[value.movie][value.char] += 1
+
+    dictionary_chars = {}
+    csv_reader = pd.read_csv("./" + LOTR_DATASETS + '/' + 'lotr_characters.csv', usecols=['name', 'race'])
+    for _, value in csv_reader.iterrows():
+        if not isinstance(value.race, str):
+            continue
+        if value.race not in dictionary_chars:
+            dictionary_chars[value.race] = [value[0].lower()]
+        else:
+            dictionary_chars[value.race].append(value[0].lower())
+
+    dictionary_race = {
+        'The Return of the King': {},
+        'The Two Towers': {},
+        'The Fellowship of the Ring': {}
+    }
+
+    for _, movie in dictionary_race.items():
+        for race, _ in dictionary_chars.items():
+            movie[race] = 0
+
+    for movie, dialogs in dictionary_dialogs.items():
+        for character, character_dialogs in dialogs.items():
+            for race, race_characters in dictionary_chars.items():
+                if character.lower() in race_characters:
+                    dictionary_race[movie.strip()][race] += character_dialogs
+
+    return {k: v for k, v in sorted(dictionary_race[selected_movie].items(), key=lambda item: item[1], reverse=True)}
+
 
 def draw_histogram_by_dictionary(dictionary, title, ylabel, xlabel):
 
@@ -200,6 +240,7 @@ def draw_pie_chart(dictionary):
 
 if __name__ == "__main__":
     get_kaggle_data()
+
     print(count_dialogs_by_race())
     draw_histogram_by_dictionary(count_dialogs_by_race(), 'amount of dialogs by race', 'value', 'race')
     print(count_races_by_heroes())
@@ -213,3 +254,15 @@ if __name__ == "__main__":
     draw_histogram_by_dictionary(average_dialogs_length_by_hero(), 'average length of sentence by hero', 'value', 'hero')
     print(count_gender_dialogs_by_move())
     draw_histogram_by_dictionary_with_dictionary(count_gender_dialogs_by_move(), 'sentences by gender in movies', 'value', 'movie')
+
+    race_dialogs_by_movie = count_race_dialogs_by_movie('The Fellowship of the Ring')
+    print(race_dialogs_by_movie)
+    draw_histogram_by_dictionary(race_dialogs_by_movie, 'amount of dialogs by race in part 1', 'value', 'race')
+
+    race_dialogs_by_movie = count_race_dialogs_by_movie('The Two Towers')
+    print(race_dialogs_by_movie)
+    draw_histogram_by_dictionary(race_dialogs_by_movie, 'amount of dialogs by race in part 2', 'value', 'race')
+
+    race_dialogs_by_movie = count_race_dialogs_by_movie('The Return of the King')
+    print(race_dialogs_by_movie)
+    draw_histogram_by_dictionary(race_dialogs_by_movie, 'amount of dialogs by race in part 3', 'value', 'race')

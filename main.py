@@ -54,6 +54,8 @@ def count_heroes_by_gender():
 
 
 def average_dialogs_length_by_hero():
+    # top 15 most popular hereos
+    # most_popular_heroes = list(count_heroes_by_dialogs().keys())[:15]
     columns = ['dialog', 'char']
     by_param = columns[0]
     to_find_param = columns[1]
@@ -72,6 +74,11 @@ def average_dialogs_length_by_hero():
     dictionary_with_dialogs = count_heroes_by_dialogs()
     for key, value in dictionary.items():
         dictionary[key] = round(value / dictionary_with_dialogs[key], 2)
+
+    # removing less important hereoes
+    # for key in dictionary.copy().keys():
+    #     if key not in most_popular_heroes:
+    #         del dictionary[key]
 
     return {k: v for k, v in sorted(dictionary.items(), key=lambda item: item[1], reverse=True)}
 

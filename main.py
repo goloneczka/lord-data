@@ -3,6 +3,7 @@
 import os
 
 from staticAnalize import *
+from vectoralizeDialog import get_dialogs_per_char
 
 os.environ['KAGGLE_USERNAME'] = "michalmichael"
 os.environ['KAGGLE_KEY'] = "212e4a92b4a5f6143a6a3fc26c2375bd"
@@ -46,7 +47,7 @@ def clear_data():
     for _, val in csv_reader.iterrows():
         val["char"] = val["char"].lower()
         val["char"] = enums.NAME_DICTIONARY[val["char"]] if val["char"] in enums.NAME_DICTIONARY else val["char"]
-        val["dialog"] = " ".join(val["dialog"].split()) if isinstance(val["dialog"], str) else ""
+        val["dialog"] = " ".join(val["dialog"].split()) if isinstance(val["dialog"], str) else " "
     csv_reader.to_csv("./" + CLEAR_LOTR_DATASETS + '/' + 'lotr_scripts.csv')
 
 
@@ -54,6 +55,7 @@ if __name__ == "__main__":
     get_kaggle_data()
     clear_data()
 
+    get_dialogs_per_char()
     #  ---- STATIC ANALIZE -- task 1
     # print(count_dialogs_by_race())
     # draw_histogram_by_dictionary(count_dialogs_by_race(), 'amount of dialogs by race', 'value', 'race')

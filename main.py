@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import os
+import re
 
 from staticAnalize import *
 from vectoralizeDialog import get_dialogs_per_char
@@ -48,6 +49,8 @@ def clear_data():
         val["char"] = val["char"].lower()
         val["char"] = enums.NAME_DICTIONARY[val["char"]] if val["char"] in enums.NAME_DICTIONARY else val["char"]
         val["dialog"] = " ".join(val["dialog"].split()) if isinstance(val["dialog"], str) else " "
+        val["dialog"] = re.sub(r'(?<=[.,])(?=[^\s])', r' ', val["dialog"])
+
     csv_reader.to_csv("./" + CLEAR_LOTR_DATASETS + '/' + 'lotr_scripts.csv')
 
 

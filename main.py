@@ -4,7 +4,7 @@ import os
 import re
 
 from staticAnalize import *
-from vectoralizeDialog import get_dialogs_per_char
+from vectoralizeDialog import get_dialogs_per_char, get_most_popular_phrase_by_char
 
 os.environ['KAGGLE_USERNAME'] = "michalmichael"
 os.environ['KAGGLE_KEY'] = "212e4a92b4a5f6143a6a3fc26c2375bd"
@@ -58,7 +58,9 @@ if __name__ == "__main__":
     get_kaggle_data()
     clear_data()
 
-    get_dialogs_per_char()
+    # print(get_most_popular_phrase_by_char())
+    print(get_most_popular_phrase_by_char())
+
     #  ---- STATIC ANALIZE -- task 1
     # print(count_dialogs_by_race())
     # draw_histogram_by_dictionary(count_dialogs_by_race(), 'amount of dialogs by race', 'value', 'race')

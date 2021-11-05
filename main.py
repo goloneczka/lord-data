@@ -60,7 +60,7 @@ if __name__ == "__main__":
 
     print(count_heroes_by_dialogs())
     print(get_dialog_sentiment())
-    # print(get_most_popular_phrase_by_char())
+    print(get_most_popular_phrase_by_char())
 
     #  ---- STATIC ANALIZE -- task 1
     # print(count_dialogs_by_race())

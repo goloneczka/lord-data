@@ -5,6 +5,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
 import nltk
+from textblob import TextBlob
 
 nltk.download('stopwords')
 nltk.download('punkt')
@@ -15,7 +16,9 @@ CLEAR_LOTR_DATASETS = 'cleaned_' + LOTR_DATASETS
 stemmer = SnowballStemmer("english")
 stopwords = stopwords.words('english')
 
-
+# znam kolejnosc przez printa dictionary_chars z metody get_dialogs_per_char
+most_popular_sorted_chars = ['frodo', 'merry', 'gimli', 'gollum', 'sam', 'gandalf', 'aragorn', 'pippin', 'theoden',
+                                 'faramir']
 def tokenize_and_stem(text):
     tokens = [word for sent in nltk.sent_tokenize(text) for word in nltk.word_tokenize(sent)]
     filtered_tokens = []
@@ -29,15 +32,13 @@ def tokenize_and_stem(text):
 
 
 def get_dialogs_per_char(only_most_popular=False):
-    most_popular_chars = ['frodo', 'sam', 'gandalf', 'aragorn', 'pippin', 'merry', 'gollum', 'gimli', 'theoden',
-                          'faramir']
     dictionary_chars = {}
     csv_reader = pd.read_csv("./" + CLEAR_LOTR_DATASETS + '/' + 'lotr_scripts.csv', usecols=['char', 'dialog'])
     if only_most_popular:
         for _, value in csv_reader.iterrows():
-            if (value.char not in dictionary_chars) and (value.char in most_popular_chars):
+            if (value.char not in dictionary_chars) and (value.char in most_popular_sorted_chars):
                 dictionary_chars[value.char] = [value.dialog]
-            elif value.char in most_popular_chars:
+            elif value.char in most_popular_sorted_chars:
                 dictionary_chars[value.char].append(value.dialog)
     else:
         for _, value in csv_reader.iterrows():
@@ -46,15 +47,15 @@ def get_dialogs_per_char(only_most_popular=False):
             else:
                 dictionary_chars[value.char].append(value.dialog)
 
+    return dictionary_chars
+
+
+def vectorize_dialogs(only_most_popular=False):
+    dictionary_chars = get_dialogs_per_char(only_most_popular)
     corpus = []
     for _, value in dictionary_chars.items():
         corpus.append(' '.join(map(str, value)))
 
-    return corpus
-
-
-def vectorize_dialogs(only_most_popular=False):
-    corpus = get_dialogs_per_char(only_most_popular)
     tv = TfidfVectorizer(binary=False, norm=None, use_idf=False,
                          smooth_idf=False, lowercase=True, stop_words='english',
                          min_df=1, max_df=1.0, max_features=None, tokenizer=tokenize_and_stem,
@@ -65,11 +66,6 @@ def vectorize_dialogs(only_most_popular=False):
 
 
 def get_most_popular_phrase_by_char():
-    # znam kolejnosc przez printa dictionary_chars z poprzedniej metody
-    most_popular_sorted_chars = ['frodo', 'merry', 'gimli', 'gollum', 'sam', 'gandalf', 'aragorn', 'pippin', 'theoden',
-                                 'faramir']
-    dictionary = {}
-
     df = vectorize_dialogs(True)
 
     df['max_value'] = df.max(axis=1)
@@ -79,3 +75,25 @@ def get_most_popular_phrase_by_char():
     popular_df['char'] = most_popular_sorted_chars
 
     return popular_df
+
+
+def get_dialog_sentiment():
+    dictionary = {}
+    indx = 0
+    for key, value in get_dialogs_per_char(True).items():
+        positive = 0
+        negative = 0
+        neutral = 0
+        for dialog in value:
+            if isinstance(dialog, str):
+                sentiment = TextBlob(dialog).sentiment
+                if sentiment.polarity > 0.3:
+                    positive += 1
+                elif sentiment.polarity < -0.3:
+                    negative += 1
+                else:
+                    neutral += 1
+        dictionary[most_popular_sorted_chars[indx]] = {'positive': positive, 'neutral': neutral, 'negative': negative}
+        indx += 1
+
+    return  dictionary

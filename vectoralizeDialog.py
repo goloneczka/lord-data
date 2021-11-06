@@ -19,6 +19,7 @@ stopwords = stopwords.words('english')
 # znam kolejnosc przez printa dictionary_chars z metody get_dialogs_per_char
 most_popular_sorted_chars = ['frodo', 'merry', 'gimli', 'gollum', 'sam', 'gandalf', 'aragorn', 'pippin', 'theoden',
                                  'faramir']
+
 def tokenize_and_stem(text):
     tokens = [word for sent in nltk.sent_tokenize(text) for word in nltk.word_tokenize(sent)]
     filtered_tokens = []
@@ -59,9 +60,14 @@ def vectorize_dialogs(only_most_popular=False):
     tv = TfidfVectorizer(binary=False, norm=None, use_idf=False,
                          smooth_idf=False, lowercase=True, stop_words='english',
                          min_df=1, max_df=1.0, max_features=None, tokenizer=tokenize_and_stem,
-                         ngram_range=(3, 3))
+                         ngram_range=(2, 2))
+
 
     df = pd.DataFrame(tv.fit_transform(corpus).toarray(), columns=tv.get_feature_names_out())
+
+    # for k, v in df.loc[[1]].items():
+    #     if v[1] > 0:
+    #         print( v)
     return df
 
 

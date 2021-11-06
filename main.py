@@ -48,8 +48,9 @@ def clear_data():
     for _, val in csv_reader.iterrows():
         val["char"] = val["char"].lower()
         val["char"] = enums.NAME_DICTIONARY[val["char"]] if val["char"] in enums.NAME_DICTIONARY else val["char"]
-        val["dialog"] = " ".join(val["dialog"].split()) if isinstance(val["dialog"], str) else " "
-        val["dialog"] = re.sub(r'(?<=[.,])(?=[^\s])', r' ', val["dialog"])
+        val["dialog"] = val["dialog"] if isinstance(val["dialog"], str) else " "
+        val["dialog"] = re.sub(r"(@\[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http.+?", " ", val["dialog"])
+        val["dialog"] = " ".join(val["dialog"].split())
 
     csv_reader.to_csv("./" + CLEAR_LOTR_DATASETS + '/' + 'lotr_scripts.csv')
 
@@ -58,8 +59,7 @@ if __name__ == "__main__":
     get_kaggle_data()
     clear_data()
 
-    print(count_heroes_by_dialogs())
-    print(get_dialog_sentiment())
+    # print(get_dialog_sentiment())
     print(get_most_popular_phrase_by_char())
 
     #  ---- STATIC ANALIZE -- task 1

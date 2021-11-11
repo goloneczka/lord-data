@@ -15,9 +15,10 @@ CLEAR_LOTR_DATASETS = 'cleaned_' + LOTR_DATASETS
 
 stemmer = SnowballStemmer("english")
 stopwords = stopwords.words('english')
+stopwords.remove('my')
 
 # znam kolejnosc przez printa dictionary_chars z metody get_dialogs_per_char
-most_popular_sorted_chars = ['frodo', 'merry', 'gimli', 'gollum', 'sam', 'gandalf', 'aragorn', 'pippin', 'theoden',
+most_popular_sorted_chars = ['gollum', 'frodo', 'merry', 'gimli', 'sam', 'gandalf', 'aragorn', 'pippin', 'theoden',
                                  'faramir']
 
 def tokenize_and_stem(text):
@@ -29,6 +30,7 @@ def tokenize_and_stem(text):
 
     # exclude stopwords from stemmed words
     stems = [stemmer.stem(t) for t in filtered_tokens if t not in stopwords]
+
     return stems
 
 
@@ -58,22 +60,21 @@ def vectorize_dialogs(only_most_popular=False):
         corpus.append(' '.join(map(str, value)))
 
     tv = TfidfVectorizer(binary=False, norm=None, use_idf=False,
-                         smooth_idf=False, lowercase=True, stop_words='english',
+                         smooth_idf=False, lowercase=True, stop_words=stopwords,
                          min_df=1, max_df=1.0, max_features=None, tokenizer=tokenize_and_stem,
                          ngram_range=(2, 2))
 
 
     df = pd.DataFrame(tv.fit_transform(corpus).toarray(), columns=tv.get_feature_names_out())
-
-    # for k, v in df.loc[[1]].items():
-    #     if v[1] > 0:
-    #         print( v)
     return df
 
 
 def get_most_popular_phrase_by_char():
     df = vectorize_dialogs(True)
 
+    # for v, k in df.loc[0].items():
+    #     if k > 0:
+    #         print(v)
     df['max_value'] = df.max(axis=1)
     df['most_popular_sequence'] = df.idxmax(axis=1)
 

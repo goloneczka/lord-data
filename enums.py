@@ -12,5 +12,16 @@ NAME_DICTIONARY = {'gan dalf': 'gandalf',
                    'frodo ': 'frodo',
                    '\xa0gandalf': 'gandalf',
                    'male': 'Male',
-                   'Males': 'Male'
+                   'Males': 'Male',
+                   'frodo baggins': 'frodo',
+                   'bilbo baggins': 'bilbo',
+                   'aragorn ii elessar': 'aragorn',
+                   'samwise gamgee': 'sam',
+                   'peregrin took': 'pippin',
+                   'théoden': 'theoden',
+                   'owyn': 'eowyn',
+                   'smeagol': 'gollum'
                    }
+RACE_DICTIONARY = {
+                    'Hobbit': 'Hobbits'
+                }

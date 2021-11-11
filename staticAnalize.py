@@ -127,7 +127,7 @@ def count_gender_dialogs_by_move():
 
 def count_race_dialogs_by_movie(selected_movie):
     dictionary_dialogs = {}
-    csv_reader = pd.read_csv("./" + LOTR_DATASETS + '/' + 'lotr_scripts.csv', usecols=['char', 'movie'])
+    csv_reader = pd.read_csv("./" + CLEAR_LOTR_DATASETS + '/' + 'lotr_scripts.csv', usecols=['char', 'movie'])
     for _, value in csv_reader.iterrows():
         if value.movie not in dictionary_dialogs:
             dictionary_dialogs[value.movie] = {}
@@ -138,7 +138,7 @@ def count_race_dialogs_by_movie(selected_movie):
             dictionary_dialogs[value.movie][value.char] += 1
 
     dictionary_chars = {}
-    csv_reader = pd.read_csv("./" + LOTR_DATASETS + '/' + 'lotr_characters.csv', usecols=['name', 'race'])
+    csv_reader = pd.read_csv("./" + CLEAR_LOTR_DATASETS + '/' + 'lotr_characters.csv', usecols=['name', 'race'])
     for _, value in csv_reader.iterrows():
         if not isinstance(value.race, str):
             continue

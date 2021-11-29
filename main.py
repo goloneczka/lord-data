@@ -4,7 +4,8 @@ import os
 import re
 
 from staticAnalize import *
-from vectoralizeDialog import get_dialogs_per_char, get_most_popular_phrase_by_char, get_dialog_sentiment
+from vectoralizeDialog import get_dialogs_per_char, get_most_popular_phrase_by_char, get_dialog_sentiment, \
+    draw_sentiment_diagram
 
 os.environ['KAGGLE_USERNAME'] = "michalmichael"
 os.environ['KAGGLE_KEY'] = "212e4a92b4a5f6143a6a3fc26c2375bd"
@@ -61,7 +62,12 @@ if __name__ == "__main__":
     get_kaggle_data()
     clear_data()
 
-    print(get_dialog_sentiment())
+    # print(get_dialog_sentiment())
+    draw_histogram_by_dictionary(draw_sentiment_diagram('positive'), 'percentage of positive dialogs', 'value', 'char')
+    draw_histogram_by_dictionary(draw_sentiment_diagram('neutral'), 'percentage of neutral dialogs', 'value', 'char')
+    draw_histogram_by_dictionary(draw_sentiment_diagram('negative'), 'percentage of negative dialogs', 'value', 'char')
+
+
     print(get_most_popular_phrase_by_char())
 
     #  ---- STATIC ANALIZE -- task 1
@@ -84,11 +90,11 @@ if __name__ == "__main__":
     # race_dialogs_by_movie = count_race_dialogs_by_movie('The Fellowship of the Ring')
     # print(race_dialogs_by_movie)
     # draw_histogram_by_dictionary(race_dialogs_by_movie, 'amount of dialogs by race in part 1', 'value', 'race')
-    # #
+    #
     # race_dialogs_by_movie = count_race_dialogs_by_movie('The Two Towers')
     # # print(race_dialogs_by_movie)
     # draw_histogram_by_dictionary(race_dialogs_by_movie, 'amount of dialogs by race in part 2', 'value', 'race')
-    # #
+    #
     # race_dialogs_by_movie = count_race_dialogs_by_movie('The Return of the King')
     # print(race_dialogs_by_movie)
     # draw_histogram_by_dictionary(race_dialogs_by_movie, 'amount of dialogs by race in part 3', 'value', 'race')

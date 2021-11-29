@@ -57,11 +57,6 @@ def average_dialogs_length_by_hero():
     for key, value in dictionary.items():
         dictionary[key] = round(value / dictionary_with_dialogs[key], 2)
 
-    # removing less important hereoes
-    # for key in dictionary.copy().keys():
-    #     if key not in most_popular_heroes:
-    #         del dictionary[key]
-
     return {k: v for k, v in sorted(dictionary.items(), key=lambda item: item[1], reverse=True)}
 
 
@@ -72,7 +67,7 @@ def count_dialogs_by_race():
         dictionary_dialogs_lower[key.lower()] = value
 
     dictionary_chars = {}
-    csv_reader = pd.read_csv("./" + LOTR_DATASETS + '/' + 'lotr_characters.csv', usecols=['name', 'race'])
+    csv_reader = pd.read_csv("./" + CLEAR_LOTR_DATASETS + '/' + 'lotr_characters.csv', usecols=['name', 'race'])
     for _, value in csv_reader.iterrows():
         race = 'UNKNOWN' if not isinstance(value.race, str) else value.race
         if race not in dictionary_chars:

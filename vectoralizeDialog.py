@@ -72,9 +72,6 @@ def vectorize_dialogs(only_most_popular=False):
 def get_most_popular_phrase_by_char():
     df = vectorize_dialogs(True)
 
-    # for v, k in df.loc[0].items():
-    #     if k > 0:
-    #         print(v)
     df['max_value'] = df.max(axis=1)
     df['most_popular_sequence'] = df.idxmax(axis=1)
 
@@ -104,3 +101,12 @@ def get_dialog_sentiment():
         indx += 1
 
     return  dictionary
+
+
+def draw_sentiment_diagram(type):
+    dialog_dictionary = get_dialog_sentiment()
+    dictionary_to_draw = {}
+    for key, value in dialog_dictionary.items():
+        dictionary_to_draw[key] = value[type] / (value['positive'] + value['neutral'] + value['negative'])
+
+    return {k: v for k, v in sorted(dictionary_to_draw.items(), key=lambda item: item[1], reverse=True)}

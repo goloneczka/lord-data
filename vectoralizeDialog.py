@@ -20,7 +20,8 @@ stopwords.remove('my')
 
 # znam kolejnosc przez printa dictionary_chars z metody get_dialogs_per_char
 most_popular_sorted_chars = ['gollum', 'frodo', 'merry', 'gimli', 'sam', 'gandalf', 'aragorn', 'pippin', 'theoden',
-                                 'faramir']
+                            'faramir']
+# most_popular_sorted_chars = ['frodo', 'merry', 'sam', 'pippin', 'aragorn', 'theoden', 'faramir', 'boromir', 'gollum', 'gimli']
 
 def tokenize_and_stem(text):
     tokens = [word for sent in nltk.sent_tokenize(text) for word in nltk.word_tokenize(sent)]
@@ -35,7 +36,7 @@ def tokenize_and_stem(text):
     return stems
 
 
-def get_dialogs_per_char(only_most_popular=False):
+def get_dialogs_per_char(only_most_popular=True):
     dictionary_chars = {}
     csv_reader = pd.read_csv("./" + CLEAR_LOTR_DATASETS + '/' + 'lotr_scripts.csv', usecols=['char', 'dialog'])
     if only_most_popular:
@@ -55,22 +56,21 @@ def get_dialogs_per_char(only_most_popular=False):
 
 
 def get_vectorizer():
-    return TfidfVectorizer(binary=False, norm=None, use_idf=False,
-                         smooth_idf=False, lowercase=True, stop_words=stopwords,
-                         min_df=1, max_df=1.0, max_features=None, tokenizer=tokenize_and_stem)
+    return TfidfVectorizer(lowercase=True, stop_words=stopwords, tokenizer=tokenize_and_stem)
 
-def vectorize_dialogs(only_most_popular=False):
+def vectorize_dialogs(only_most_popular=True):
     dictionary_chars = get_dialogs_per_char(only_most_popular)
     corpus = []
     for _, value in dictionary_chars.items():
         corpus.append(' '.join(map(str, value)))
     tv = get_vectorizer()
+    tv.fit_transform(corpus)
     df = pd.DataFrame(tv.fit_transform(corpus).toarray(), columns=tv.get_feature_names_out())
-    return df
+    return df, tv
 
 
 def get_most_popular_phrase_by_char():
-    df = vectorize_dialogs(True)
+    df, tv = vectorize_dialogs(True)
 
     df['max_value'] = df.max(axis=1)
     df['most_popular_sequence'] = df.idxmax(axis=1)

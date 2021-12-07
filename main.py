@@ -70,17 +70,23 @@ if __name__ == "__main__":
     #
     # print(get_most_popular_phrase_by_char())
 
-    data = vectorize_dialogs()
+    data, vectorizer = vectorize_dialogs(True)
 
     kmeans_results = run_KMeans(8, data)
-    kmeans = kmeans_results.get(5)
+    kmeans = kmeans_results.get(3)
     print(kmeans)
 
     final_df_array = data.to_numpy()
     prediction = kmeans.predict(data)
-    n_feats = 20
-    dfs = get_top_features_cluster(final_df_array, prediction, n_feats, get_vectorizer())
+    n_feats = 10
+    dfs = get_top_features_cluster(final_df_array, prediction, n_feats, vectorizer)
     plotWords(dfs, 13)
+
+    labels = kmeans.labels_
+    chars = pd.DataFrame(get_dialogs_per_char(True).keys())
+
+    chars['label'] = labels
+    print(chars)
 
     #  ---- STATIC ANALIZE -- task 1
     # print(count_dialogs_by_race())

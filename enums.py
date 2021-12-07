@@ -20,7 +20,15 @@ NAME_DICTIONARY = {'gan dalf': 'gandalf',
                    'peregrin took': 'pippin',
                    'théoden': 'theoden',
                    'owyn': 'eowyn',
-                   'smeagol': 'gollum'
+                   'smeagol': 'gollum',
+                   '(gollum': 'gollum',
+                   'mouth of sauron': 'sauron',
+                   'sam voiceover': 'sam',
+                   'arwen voiceover': 'arwen',
+                   'gandalf voice over': 'gandalf',
+                   'saruman voice over': 'saruman',
+                   'sauron voice': 'sauron',
+                   'bilbo voiceover': 'bilbo'
                    }
 RACE_DICTIONARY = {
                     'Hobbit': 'Hobbits'

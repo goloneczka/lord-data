@@ -6,6 +6,7 @@ from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
 import nltk
 from textblob import TextBlob
+from sklearn import cluster
 
 nltk.download('stopwords')
 nltk.download('punkt')
@@ -53,18 +54,17 @@ def get_dialogs_per_char(only_most_popular=False):
     return dictionary_chars
 
 
+def get_vectorizer():
+    return TfidfVectorizer(binary=False, norm=None, use_idf=False,
+                         smooth_idf=False, lowercase=True, stop_words=stopwords,
+                         min_df=1, max_df=1.0, max_features=None, tokenizer=tokenize_and_stem)
+
 def vectorize_dialogs(only_most_popular=False):
     dictionary_chars = get_dialogs_per_char(only_most_popular)
     corpus = []
     for _, value in dictionary_chars.items():
         corpus.append(' '.join(map(str, value)))
-
-    tv = TfidfVectorizer(binary=False, norm=None, use_idf=False,
-                         smooth_idf=False, lowercase=True, stop_words=stopwords,
-                         min_df=1, max_df=1.0, max_features=None, tokenizer=tokenize_and_stem,
-                         ngram_range=(2, 2))
-
-
+    tv = get_vectorizer()
     df = pd.DataFrame(tv.fit_transform(corpus).toarray(), columns=tv.get_feature_names_out())
     return df
 

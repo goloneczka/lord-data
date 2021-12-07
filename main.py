@@ -4,8 +4,8 @@ import os
 import re
 
 from staticAnalize import *
-from vectoralizeDialog import get_dialogs_per_char, get_most_popular_phrase_by_char, get_dialog_sentiment, \
-    draw_sentiment_diagram
+from vectoralizeDialog import *
+from kmeans import *
 
 os.environ['KAGGLE_USERNAME'] = "michalmichael"
 os.environ['KAGGLE_KEY'] = "212e4a92b4a5f6143a6a3fc26c2375bd"
@@ -63,12 +63,24 @@ if __name__ == "__main__":
     clear_data()
 
     # print(get_dialog_sentiment())
-    draw_histogram_by_dictionary(draw_sentiment_diagram('positive'), 'percentage of positive dialogs', 'value', 'char')
-    draw_histogram_by_dictionary(draw_sentiment_diagram('neutral'), 'percentage of neutral dialogs', 'value', 'char')
-    draw_histogram_by_dictionary(draw_sentiment_diagram('negative'), 'percentage of negative dialogs', 'value', 'char')
+    # draw_histogram_by_dictionary(draw_sentiment_diagram('positive'), 'percentage of positive dialogs', 'value', 'char')
+    # draw_histogram_by_dictionary(draw_sentiment_diagram('neutral'), 'percentage of neutral dialogs', 'value', 'char')
+    # draw_histogram_by_dictionary(draw_sentiment_diagram('negative'), 'percentage of negative dialogs', 'value', 'char')
+    #
+    #
+    # print(get_most_popular_phrase_by_char())
 
+    data = vectorize_dialogs()
 
-    print(get_most_popular_phrase_by_char())
+    kmeans_results = run_KMeans(8, data)
+    kmeans = kmeans_results.get(5)
+    print(kmeans)
+
+    final_df_array = data.to_numpy()
+    prediction = kmeans.predict(data)
+    n_feats = 20
+    dfs = get_top_features_cluster(final_df_array, prediction, n_feats, get_vectorizer())
+    plotWords(dfs, 13)
 
     #  ---- STATIC ANALIZE -- task 1
     # print(count_dialogs_by_race())

@@ -1,5 +1,3 @@
-from nltk.tokenize import sent_tokenize, word_tokenize
-
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.corpus import stopwords
@@ -15,11 +13,19 @@ CLEAR_LOTR_DATASETS = 'cleaned_' + LOTR_DATASETS
 
 stemmer = SnowballStemmer("english")
 stopwords = stopwords.words('english')
-stopwords.remove('my')
 
 # znam kolejnosc przez printa dictionary_chars z metody get_dialogs_per_char
 most_popular_sorted_chars = ['gollum', 'frodo', 'merry', 'gimli', 'sam', 'gandalf', 'aragorn', 'pippin', 'theoden',
                                  'faramir']
+lotr_unique_words = ['merry']
+stopwords_and_lotr_unique_words = []
+
+
+def init_clean_dictionaries():
+    stopwords.remove('my')
+    global stopwords_and_lotr_unique_words
+    stopwords_and_lotr_unique_words = stopwords + lotr_unique_words
+
 
 def tokenize_and_stem(text):
     tokens = [word for sent in nltk.sent_tokenize(text) for word in nltk.word_tokenize(sent)]
@@ -28,8 +34,15 @@ def tokenize_and_stem(text):
         if nltk.re.search('[a-zA-Z]', token):
             filtered_tokens.append(token)
 
-    # exclude stopwords from stemmed words
-    stems = [stemmer.stem(t) for t in filtered_tokens if t not in stopwords]
+    stems = []
+    for token in filtered_tokens:
+        if token not in stopwords_and_lotr_unique_words:
+            stems.append(stemmer.stem(token))
+        elif token in lotr_unique_words:
+            stems.append(token)
+
+    # stems = [stemmer.stem(t) for t in filtered_tokens if t not in stopwords_and_lotr_unique_words]
+    # looped_lotr_unique_words = [t for t in filtered_tokens if t in lotr_unique_words]
 
     return stems
 
@@ -54,6 +67,7 @@ def get_dialogs_per_char(only_most_popular=False):
 
 
 def vectorize_dialogs(only_most_popular=False):
+    init_clean_dictionaries()
     dictionary_chars = get_dialogs_per_char(only_most_popular)
     corpus = []
     for _, value in dictionary_chars.items():

@@ -21,7 +21,6 @@ stopwords.remove('my')
 # znam kolejnosc przez printa dictionary_chars z metody get_dialogs_per_char
 most_popular_sorted_chars = ['gollum', 'frodo', 'merry', 'gimli', 'sam', 'gandalf', 'aragorn', 'pippin', 'theoden',
                             'faramir']
-# most_popular_sorted_chars = ['frodo', 'merry', 'sam', 'pippin', 'aragorn', 'theoden', 'faramir', 'boromir', 'gollum', 'gimli']
 
 def tokenize_and_stem(text):
     tokens = [word for sent in nltk.sent_tokenize(text) for word in nltk.word_tokenize(sent)]
@@ -37,6 +36,10 @@ def tokenize_and_stem(text):
 
 
 def get_dialogs_per_char(only_most_popular=True):
+
+    # comment bellow line if wanna use didnt changed most_popular_sorted_chars
+    get_heroes_by_race()
+
     dictionary_chars = {}
     csv_reader = pd.read_csv("./" + CLEAR_LOTR_DATASETS + '/' + 'lotr_scripts.csv', usecols=['char', 'dialog'])
     if only_most_popular:
@@ -110,3 +113,19 @@ def draw_sentiment_diagram(type):
         dictionary_to_draw[key] = value[type] / (value['positive'] + value['neutral'] + value['negative'])
 
     return {k: v for k, v in sorted(dictionary_to_draw.items(), key=lambda item: item[1], reverse=True)}
+
+
+def get_heroes_by_race(look_for_race='Hobbits'):
+    heroes_in_script = set()
+    csv_reader = pd.read_csv("./" + CLEAR_LOTR_DATASETS + '/' + 'lotr_scripts.csv', usecols=['char'])
+    for _, value in csv_reader.iterrows():
+        heroes_in_script.add(value.char)
+
+    heroes_by_race = []
+    csv_reader = pd.read_csv("./" + CLEAR_LOTR_DATASETS + '/' + 'lotr_characters.csv', usecols=['name', 'race'])
+    for _, value in csv_reader.iterrows():
+        if value.race == look_for_race and value[0] in heroes_in_script:
+            heroes_by_race.append(value[0])
+
+    global most_popular_sorted_chars
+    most_popular_sorted_chars = heroes_by_race

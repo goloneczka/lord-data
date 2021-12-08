@@ -62,6 +62,10 @@ if __name__ == "__main__":
     get_kaggle_data()
     clear_data()
 
+    lotr_kmean()
+
+    # -- TASK 2 ---
+    # IT DOSENT WORK IF UNCOMENT
     # print(get_dialog_sentiment())
     # draw_histogram_by_dictionary(draw_sentiment_diagram('positive'), 'percentage of positive dialogs', 'value', 'char')
     # draw_histogram_by_dictionary(draw_sentiment_diagram('neutral'), 'percentage of neutral dialogs', 'value', 'char')
@@ -69,24 +73,6 @@ if __name__ == "__main__":
     #
     #
     # print(get_most_popular_phrase_by_char())
-
-    data, vectorizer = vectorize_dialogs(True)
-
-    kmeans_results = run_KMeans(8, data)
-    kmeans = kmeans_results.get(3)
-    print(kmeans)
-
-    final_df_array = data.to_numpy()
-    prediction = kmeans.predict(data)
-    n_feats = 10
-    dfs = get_top_features_cluster(final_df_array, prediction, n_feats, vectorizer)
-    plotWords(dfs, 13)
-
-    labels = kmeans.labels_
-    chars = pd.DataFrame(get_dialogs_per_char(True).keys())
-
-    chars['label'] = labels
-    print(chars)
 
     #  ---- STATIC ANALIZE -- task 1
     # print(count_dialogs_by_race())

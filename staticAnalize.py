@@ -2,8 +2,6 @@ import pandas as pd
 import enums
 import matplotlib.pyplot as plt
 import numpy as np
-import random
-import string
 
 LOTR_DATASETS = 'lotr_characters'
 CLEAR_LOTR_DATASETS = 'cleaned_' + LOTR_DATASETS
@@ -205,3 +203,5 @@ def draw_pie_chart(dictionary):
             shadow=True, startangle=90)
 
     plt.show()
+
+

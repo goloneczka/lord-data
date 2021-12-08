@@ -2,7 +2,9 @@ from sklearn import cluster
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
+# import seaborn as sns
+from vectoralizeDialog import vectorize_dialogs, get_dialogs_per_char
+
 
 def run_KMeans(max_k, data):
     max_k += 1
@@ -38,5 +40,25 @@ def plotWords(dfs, n_feats):
     plt.figure(figsize=(8, 4))
     for i in range(0, len(dfs)):
         plt.title(("Most Common Words in Cluster {}".format(i)), fontsize=10, fontweight='bold')
-        sns.barplot(x = 'score' , y = 'features', orient = 'h' , data = dfs[i][:n_feats])
+        # sns.barplot(x = 'score' , y = 'features', orient = 'h' , data = dfs[i][:n_feats])
         plt.show()
+
+
+def lotr_kmean():
+    data, vectorizer = vectorize_dialogs(True)
+
+    kmeans_results = run_KMeans(8, data)
+    kmeans = kmeans_results.get(3)
+    print(kmeans)
+
+    final_df_array = data.to_numpy()
+    prediction = kmeans.predict(data)
+    n_feats = 10
+    dfs = get_top_features_cluster(final_df_array, prediction, n_feats, vectorizer)
+    plotWords(dfs, 13)
+
+    labels = kmeans.labels_
+    chars = pd.DataFrame(get_dialogs_per_char(True).keys())
+
+    chars['label'] = labels
+    print(chars)

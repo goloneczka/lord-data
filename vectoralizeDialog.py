@@ -19,9 +19,9 @@ stopwords = stopwords.words('english')
 stopwords.remove('my')
 
 # znam kolejnosc przez printa dictionary_chars z metody get_dialogs_per_char
-most_popular_sorted_chars = ['gollum', 'frodo', 'merry', 'gimli', 'sam', 'gandalf', 'aragorn', 'pippin', 'theoden',
-                            'faramir']
-# most_popular_sorted_chars = ['frodo', 'merry', 'sam', 'pippin', 'aragorn', 'theoden', 'faramir', 'boromir', 'gollum', 'gimli']
+# most_popular_sorted_chars = ['gollum', 'frodo', 'merry', 'gimli', 'sam', 'gandalf', 'aragorn', 'pippin', 'theoden',
+#                             'faramir']
+most_popular_sorted_chars = ['frodo', 'gandalf', 'aragorn', 'eowyn', 'galadriel', 'arwen']
 
 def tokenize_and_stem(text):
     tokens = [word for sent in nltk.sent_tokenize(text) for word in nltk.word_tokenize(sent)]

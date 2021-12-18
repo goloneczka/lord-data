@@ -7,6 +7,8 @@ from staticAnalize import *
 from vectoralizeDialog import *
 from kmeans import *
 
+from sklearn.metrics import silhouette_score
+
 os.environ['KAGGLE_USERNAME'] = "michalmichael"
 os.environ['KAGGLE_KEY'] = "212e4a92b4a5f6143a6a3fc26c2375bd"
 
@@ -72,14 +74,16 @@ if __name__ == "__main__":
 
     data, vectorizer = vectorize_dialogs(True)
 
-    # kmeans_results = run_KMeans(8, data)
-    # kmeans = kmeans_results.get(3)
+    # kmeans_results = run_KMeans(5, data)
+    # kmeans = kmeans_results.get(2)
 
     db_scan = run_DBSan(data)
     final_df_array = data.to_numpy()
-    n_feats = 10
-    dfs = get_top_features_cluster(final_df_array, db_scan, n_feats, vectorizer)
-    plotWords(dfs, 13)
+    # n_feats = 10
+    # dfs = get_top_features_cluster(final_df_array, db_scan, n_feats, vectorizer)
+    # plotWords(dfs, 13)
+
+    print(silhouette_score(final_df_array, db_scan))
 
     # if you want to see heroes assigned to clusters comment out lines below and comment the ones above
     # labels = db_scan.labels_

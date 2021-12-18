@@ -21,6 +21,7 @@ stopwords.remove('my')
 # znam kolejnosc przez printa dictionary_chars z metody get_dialogs_per_char
 # most_popular_sorted_chars = ['gollum', 'frodo', 'merry', 'gimli', 'sam', 'gandalf', 'aragorn', 'pippin', 'theoden',
 #                             'faramir']
+# most_popular_sorted_chars = ['frodo', 'sam', 'aragorn', 'merry', 'pippin', 'bilbo', 'theoden', 'faramir', 'boromir']
 most_popular_sorted_chars = ['frodo', 'gandalf', 'aragorn', 'eowyn', 'galadriel', 'arwen']
 
 def tokenize_and_stem(text):

@@ -15,8 +15,9 @@ def run_KMeans(max_k, data):
                                 , tol=0.0001
                                 , random_state=1
                                 , algorithm='full')
-
-        kmeans_results.update({k: kmeans.fit(data)})
+        #fit_predict when we want silhouettte score
+        #kmeans_results.update({k: kmeans.fit(data)})
+        kmeans_results.update({k: kmeans.fit_predict(data)})
 
     return kmeans_results
 

@@ -289,8 +289,9 @@ def class_report(y_test, y_pred_vect):
     plt.show()
 
 if __name__ == "__main__":
-    get_kaggle_data()
-    clear_data()
+    # comment for classification
+    # get_kaggle_data()
+    # clear_data()
 
     # print(get_dialog_sentiment())
     # draw_histogram_by_dictionary(draw_sentiment_diagram('positive'), 'percentage of positive dialogs', 'value', 'char')
@@ -302,16 +303,17 @@ if __name__ == "__main__":
 
     data, vectorizer = vectorize_dialogs(True)
 
+    # clasterization
     # kmeans_results = run_KMeans(5, data)
     # kmeans = kmeans_results.get(2)
 
-    db_scan = run_DBSan(data)
-    final_df_array = data.to_numpy()
+    # db_scan = run_DBSan(data)
+    # final_df_array = data.to_numpy()
     # n_feats = 10
     # dfs = get_top_features_cluster(final_df_array, db_scan, n_feats, vectorizer)
     # plotWords(dfs, 13)
 
-    print(silhouette_score(final_df_array, db_scan))
+    # print(silhouette_score(final_df_array, db_scan))
 
     # if you want to see heroes assigned to clusters comment out lines below and comment the ones above
     # labels = db_scan.labels_

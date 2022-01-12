@@ -75,15 +75,17 @@ def get_dialogs_per_char(only_most_popular=True):
 def get_vectorizer():
     return TfidfVectorizer(lowercase=True, stop_words=stopwords, tokenizer=tokenize_and_stem)
 
-def vectorize_dialogs(only_most_popular=False):
-    #classification
+
+def vectorize_dialogs(only_most_popular=False  # clasterization = True
+                      ):
+    # classification
     init_clean_dictionaries()
     dictionary_chars = get_dialogs_per_char(only_most_popular)
     corpus = []
     for _, value in dictionary_chars.items():
         corpus.append(' '.join(map(str, value)))
 
-    #clasterization
+    # clasterization
     # tv = get_vectorizer()
     # tv.fit_transform(corpus)
     # df = pd.DataFrame(tv.fit_transform(corpus).toarray(), columns=tv.get_feature_names_out())
@@ -94,13 +96,12 @@ def vectorize_dialogs(only_most_popular=False):
                          min_df=1, max_df=1.0, max_features=None, tokenizer=tokenize_and_stem,
                          ngram_range=(2, 2))
 
-
     df = pd.DataFrame(tv.fit_transform(corpus).toarray(), columns=tv.get_feature_names_out())
     return df
 
 
 def get_most_popular_phrase_by_char():
-    #clasterization
+    # clasterization
     # df, tv = vectorize_dialogs(True)
     df = vectorize_dialogs(True)
 
@@ -132,7 +133,7 @@ def get_dialog_sentiment():
         dictionary[most_popular_sorted_chars[indx]] = {'positive': positive, 'neutral': neutral, 'negative': negative}
         indx += 1
 
-    return  dictionary
+    return dictionary
 
 
 def draw_sentiment_diagram(type):

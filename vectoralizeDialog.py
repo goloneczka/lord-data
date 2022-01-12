@@ -16,13 +16,22 @@ CLEAR_LOTR_DATASETS = 'cleaned_' + LOTR_DATASETS
 
 stemmer = SnowballStemmer("english")
 stopwords = stopwords.words('english')
-stopwords.remove('my')
 
 # znam kolejnosc przez printa dictionary_chars z metody get_dialogs_per_char
 # most_popular_sorted_chars = ['gollum', 'frodo', 'merry', 'gimli', 'sam', 'gandalf', 'aragorn', 'pippin', 'theoden',
 #                             'faramir']
 # most_popular_sorted_chars = ['frodo', 'sam', 'aragorn', 'merry', 'pippin', 'bilbo', 'theoden', 'faramir', 'boromir']
 most_popular_sorted_chars = ['frodo', 'gandalf', 'aragorn', 'eowyn', 'galadriel', 'arwen']
+
+lotr_unique_words = ['merry']
+stopwords_and_lotr_unique_words = []
+
+
+def init_clean_dictionaries():
+    stopwords.remove('my')
+    global stopwords_and_lotr_unique_words
+    stopwords_and_lotr_unique_words = stopwords + lotr_unique_words
+
 
 def tokenize_and_stem(text):
     tokens = [word for sent in nltk.sent_tokenize(text) for word in nltk.word_tokenize(sent)]
@@ -31,8 +40,15 @@ def tokenize_and_stem(text):
         if nltk.re.search('[a-zA-Z]', token):
             filtered_tokens.append(token)
 
-    # exclude stopwords from stemmed words
-    stems = [stemmer.stem(t) for t in filtered_tokens if t not in stopwords]
+    stems = []
+    for token in filtered_tokens:
+        if token not in stopwords_and_lotr_unique_words:
+            stems.append(stemmer.stem(token))
+        elif token in lotr_unique_words:
+            stems.append(token)
+
+    # stems = [stemmer.stem(t) for t in filtered_tokens if t not in stopwords_and_lotr_unique_words]
+    # looped_lotr_unique_words = [t for t in filtered_tokens if t in lotr_unique_words]
 
     return stems
 
@@ -59,19 +75,34 @@ def get_dialogs_per_char(only_most_popular=True):
 def get_vectorizer():
     return TfidfVectorizer(lowercase=True, stop_words=stopwords, tokenizer=tokenize_and_stem)
 
-def vectorize_dialogs(only_most_popular=True):
+def vectorize_dialogs(only_most_popular=False):
+    #classification
+    init_clean_dictionaries()
     dictionary_chars = get_dialogs_per_char(only_most_popular)
     corpus = []
     for _, value in dictionary_chars.items():
         corpus.append(' '.join(map(str, value)))
-    tv = get_vectorizer()
-    tv.fit_transform(corpus)
+
+    #clasterization
+    # tv = get_vectorizer()
+    # tv.fit_transform(corpus)
+    # df = pd.DataFrame(tv.fit_transform(corpus).toarray(), columns=tv.get_feature_names_out())
+    # return df, tv
+
+    tv = TfidfVectorizer(binary=False, norm=None, use_idf=False,
+                         smooth_idf=False, lowercase=True, stop_words=stopwords,
+                         min_df=1, max_df=1.0, max_features=None, tokenizer=tokenize_and_stem,
+                         ngram_range=(2, 2))
+
+
     df = pd.DataFrame(tv.fit_transform(corpus).toarray(), columns=tv.get_feature_names_out())
-    return df, tv
+    return df
 
 
 def get_most_popular_phrase_by_char():
-    df, tv = vectorize_dialogs(True)
+    #clasterization
+    # df, tv = vectorize_dialogs(True)
+    df = vectorize_dialogs(True)
 
     df['max_value'] = df.max(axis=1)
     df['most_popular_sequence'] = df.idxmax(axis=1)

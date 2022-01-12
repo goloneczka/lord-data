@@ -13,11 +13,28 @@ os.environ['KAGGLE_USERNAME'] = "michalmichael"
 os.environ['KAGGLE_KEY'] = "212e4a92b4a5f6143a6a3fc26c2375bd"
 
 import kaggle
-import pandas as pd
 import enums
 
 LOTR_DATASETS = 'lotr_characters'
 CLEAR_LOTR_DATASETS = 'cleaned_' + LOTR_DATASETS
+
+# Classification
+import numpy as np
+import pandas as pd
+import os
+import matplotlib.pyplot as plt
+import seaborn as sns
+import re
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, classification_report
+
+from tensorflow import string as tf_string
+from keras.models import Model
+from tensorflow.keras.layers import TextVectorization
+from keras.layers import Input, Embedding, Dropout, Dense, LSTM
+from keras.callbacks import EarlyStopping
+from tensorflow.keras.utils import to_categorical
 
 
 def get_kaggle_data():
@@ -59,6 +76,217 @@ def clear_data():
 
     csv_reader.to_csv("./" + CLEAR_LOTR_DATASETS + '/' + 'lotr_scripts.csv')
 
+characters_names = [
+    'deagol',
+    'smeagol',
+    'gollum',
+    'frodo',
+    'merry',
+    'gimli',
+    'sam',
+    'gandalf',
+    'aragorn',
+    'pippin',
+    'hobbit',
+    'rosie',
+    'bilbo',
+    'saruman',
+    'theoden',
+    'galadril',
+    'elrond',
+    'grima',
+    'witch king',
+    'eowyn',
+    'faramir',
+    'orc',
+    'soldiers gate',
+    'gothmog',
+    'general',
+    'captain',
+    'soldier',
+    'sauron',
+    'eomer',
+    'army',
+    'boson',
+    'mercenary',
+    'eowyn merry',
+    'denethor',
+    'rohirrim',
+    'galadriel',
+    'legolas',
+    'king dead',
+    'grimbold',
+    'irolas',
+    'orcs',
+    'gamling',
+    'madril',
+    'damrod',
+    'soldiers',
+    'soldiers minas tirith',
+    'woman',
+    'haldir',
+    'old man',
+    'boromir',
+    'crowd',
+    'arwen',
+    'hama',
+    'sharku',
+    'people',
+    'lady',
+    'freda',
+    'morwen',
+    'rohan stableman',
+    'gorbag',
+    'ugluk',
+    'shagrat',
+    'uruk hai',
+    'snaga',
+    'grishnakh',
+    'merry pippin',
+    'wildman',
+    'strider',
+    'eothain',
+    'rohan horseman',
+    'farmer maggot',
+    'white wizard',
+    'gaffer',
+    'noakes',
+    'sandyman',
+    'figwit',
+    'general shout',
+    'grishnak',
+    'mrs bracegirdle',
+    'proudfoot hobbit',
+    'gatekeepr',
+    'man',
+    'children hobbits',
+    'barliman',
+    'ring',
+    'men']
+
+races = [
+    'stoor' ,
+    'stoor',
+    'stoor',
+    'hobbit',
+    'hobbit',
+    'dwarf',
+    'hobbit',
+    'maia',
+    'human',
+    'hobbit',
+    'hobbit',
+    'hobbit',
+    'hobbit',
+    'maia',
+    'human',
+    'elf',
+    'elf',
+    'human',
+    'ringwraith',
+    'human',
+    'human',
+    'orc',
+    'human',
+    'orc',
+    'orc',
+    'human',
+    'human',
+    'maia' ,
+    'human',
+    'human',
+    'boson',
+    'human',
+    'human',
+    'human',
+    'human',
+    'elf',
+    'elf',
+    'ringwraith',
+    'human',
+    'elf',
+    'orc',
+    'human' ,
+    'human',
+    'human',
+    'human',
+    'human',
+    'human',
+    'elf',
+    'human',
+    'human',
+    'human',
+    'elf',
+    'human',
+    'orc',
+    'human',
+    'human',
+    'human',
+    'human',
+    'human',
+    'orc',
+    'orc',
+    'orc',
+    'orc',
+    'orc',
+    'orc',
+    'hobbit' ,
+    'human',
+    'human',
+    'human',
+    'human',
+    'human',
+    'maia',
+    'hobbit',
+    'hobbit',
+    'hobbit',
+    'elf',
+    'human',
+    'orc',
+    'hobbit',
+    'hobbit',
+    'human',
+    'human',
+    'hobbit' ,
+    'human',
+    'ringwraith',
+    'human']
+
+def get_dialogs(label_col):
+    all_dialogs = []
+    labels = []
+    characters = get_characters_metadata()
+    dialogs = get_dialogs_per_char()
+    for character_name in characters_names:
+        if character_name not in dialogs:
+            continue
+        for dialog in dialogs[character_name]:
+            if character_name in characters:
+                all_dialogs.append(dialog)
+                labels.append(characters[character_name][label_col])
+    return all_dialogs, labels
+
+def class_report(y_test, y_pred_vect):
+    y_pred = np.argmax(y_pred_vect, axis=1)
+    print(classification_report(y_true=y_test, y_pred=y_pred))
+
+    conf_mtx = confusion_matrix(y_test, y_pred)
+    races = ['dwarf',
+             'elf',
+             'ent',
+             'hobbit',
+             'maia',
+             'hobbit',
+             'human',
+             'ringwraith',
+             'stoor']
+    df_conf_mtx = pd.DataFrame(conf_mtx, index=races, columns=races)
+    plt.figure(figsize=(12, 5))
+    sns.heatmap(df_conf_mtx, fmt='d', annot=True, cmap='Reds')
+    plt.xlabel('Predicted label', size = 15)
+    plt.ylabel('True label', size= 15)
+    plt.title('Confusion matrix', size=20)
+    plt.show()
 
 if __name__ == "__main__":
     get_kaggle_data()
@@ -120,3 +348,84 @@ if __name__ == "__main__":
     # race_dialogs_by_movie = count_race_dialogs_by_movie('The Return of the King')
     # print(race_dialogs_by_movie)
     # draw_histogram_by_dictionary(race_dialogs_by_movie, 'amount of dialogs by race in part 3', 'value', 'race')
+
+    # def get_all_words():
+    #     all_words = {}
+    #     dialogs = list(vectorize_dialogs().columns)
+    #     for dialogue in dialogs:
+    #         words = pd.Series(dialogue.split(' ')).value_counts()
+    #         for word in words.index:
+    #             if word.index in all_words:
+    #                 all_words[word.index] += words[word]
+    #             else: all_words[word.index] = words[word]
+    #
+    #     print('Unique words count:', len(all_words))
+
+    dialogs, labels = get_dialogs('race')
+
+    all_words = {}
+    for dialog in dialogs:
+        if not isinstance(dialog, str):
+            continue
+        words = pd.Series(dialog.split(" ")).value_counts()
+        for word in words.index:
+            if word.index in all_words:
+                all_words[word] += words[word]
+            else:
+                all_words[word] = words[word]
+
+    print(f'Unique words count: {len(all_words)}')
+
+    embedding_dimension = 128
+    vocabulary_size = len(all_words)
+    sequence_length = 64
+    vect_layer = TextVectorization(max_tokens=vocabulary_size, output_mode="int",
+                                   output_sequence_length=sequence_length)
+    vect_layer.adapt(dialogs)
+
+    # input_layer = Input(shape=(1,), dtype=tf_string)
+    # vector = vect_layer(input_layer)
+    # embedding = Embedding(vocabulary_size, embedding_dimension)(vector)
+    # x = Bidirectional(LSTM(64, return_sequences=True))(embedding)
+    # x = Dropout(0.5)(x)
+    # x = Bidirectional(LSTM(32))(x)
+    # x = Dropout(0.5)(x)
+    # x = Dense(16, "relu")(x)
+    # x = Dropout(0.5)(x)
+    # output_layer = Dense(12, "softmax")(x)
+
+    input_layer = Input(shape=(1,), dtype=tf_string)
+    vector = vect_layer(input_layer)
+    embedding = Embedding(vocabulary_size, embedding_dimension)(vector)
+    x = LSTM(64, return_sequences=True)(embedding)
+    x = Dropout(0.5)(x)
+    x = LSTM(32)(x)
+    x = Dropout(0.5)(x)
+    x = Dense(16, "relu")(x)
+    x = Dropout(0.5)(x)
+    output_layer = Dense(12, "softmax")(x)
+
+    model = Model(input_layer, output_layer)
+    model.summary()
+    model.compile(optimizer="Adam", loss="categorical_crossentropy", metrics=["accuracy"])
+
+    early_stopping = EarlyStopping(monitor="val_loss", min_delta=0, patience=30, restore_best_weights=30)
+    batch_size = 32
+    epochs = 30
+
+    label_encoder = LabelEncoder()
+    labels = label_encoder.fit_transform(labels) # pandas.core.series.Series
+
+    X_train, X_test, y_train, y_test = train_test_split(dialogs, labels, test_size=0.2, random_state=11)
+    X_train, X_valid, y_train, y_valid = train_test_split(X_train, y_train, test_size=0.20, random_state=1)
+
+    y_train_vect = to_categorical(y_train)
+    y_valid_vect = to_categorical(y_valid)
+
+    X_train = np.asarray(X_train)
+    X_valid = np.asarray(X_valid)
+
+    history_bdirect = model.fit(X_train, y_train_vect, validation_data=(X_valid, y_valid_vect),
+                                callbacks=[early_stopping], epochs=epochs, batch_size=batch_size)
+
+    class_report(y_test, model.predict(X_test))

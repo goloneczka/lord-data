@@ -8,7 +8,6 @@ import string
 LOTR_DATASETS = 'lotr_characters'
 CLEAR_LOTR_DATASETS = 'cleaned_' + LOTR_DATASETS
 
-
 def count_by_params(csv_file, columns):
     param = columns[-1]
     dictionary = {}
@@ -75,15 +74,23 @@ def count_dialogs_by_race():
         else:
             dictionary_chars[race].append(value[0].lower())
 
-    dictionary_race = {}
-    for key, nested_dictionary in dictionary_chars.items():
-        dictionary_race[key] = 0
-        for hero in nested_dictionary:
-            alias = enums.NAME_DICTIONARY[hero] if hero in enums.NAME_DICTIONARY else hero
-            if alias in dictionary_dialogs_lower:
-                dictionary_race[key] += dictionary_dialogs_lower[alias]
 
-    return {k: v for k, v in sorted(dictionary_race.items(), key=lambda item: item[1], reverse=True)}
+def get_characters_metadata():
+    characters = {}
+    csv_reader = pd.read_csv("./" + CLEAR_LOTR_DATASETS + '/' + 'lotr_characters.csv',
+                             usecols=['name', 'race', 'gender'])
+    most_popular_chars = ['gollum', 'frodo', 'merry', 'gimli', 'sam', 'gandalf', 'aragorn', 'pippin', 'theoden',
+                          'faramir']
+    for _, value in csv_reader.iterrows():
+        # if value['name'] not in most_popular_chars:
+        #     continue
+        race = value.race if isinstance(value.race, str) else 'UNKNOWN'
+        characters[value["name"]] = {
+            'race': race,
+            'gender': value.gender
+        }
+
+    return characters
 
 
 def count_gender_dialogs_by_move():
